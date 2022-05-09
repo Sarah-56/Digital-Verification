@@ -44,7 +44,7 @@ program tb_counter(Counter_Interface.tb sig);
                 #1
                 sig.cb.rst_l <= 0;
                 sig.cb.INIT <= 1;
-                #2
+                #3
                 sig.cb.INIT <= 0;
                 #481
                 sig.cb.rst_l <= 1;

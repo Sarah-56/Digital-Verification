@@ -9,7 +9,7 @@ interface Counter_Interface #(
     logic [COUNTER_SIZE - 1:0] loadValue;
     
     clocking cb @(posedge clk);
-      default input #0ns output #1ns;
+      default input #0ns output #0ns;
       output rst_l, ctrl, INIT, loadValue;
       input WHO, LOSER, WINNER, GAMEOVER;
     endclocking
