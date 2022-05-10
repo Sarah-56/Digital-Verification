@@ -1,5 +1,5 @@
 $date
-	Mon May  9 12:02:35 2022
+	Mon May  9 21:08:51 2022
 $end
 
 $version
@@ -51,9 +51,9 @@ $dumpvars
 b0000 *
 b00 $
 b00 #
-b0000 1
+bxxxx 1
 bxxxx 0
-b0000 2
+bxxxx 2
 bzzzz 3
 bxx /
 bxx .
@@ -74,6 +74,8 @@ $end
 1!
 1"
 b0000 0
+b0000 1
+b0000 2
 0)
 1%
 #3
