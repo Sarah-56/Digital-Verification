@@ -4,28 +4,12 @@
       Date: April 2022                                                      
       Auther: Sarah Mohamed Ahmed  
 **********************************************************************************/
-
-
 program tb_counter(Counter_Interface.tb sig);
     /********************************************************************************
         PARAMETERS
     ********************************************************************************/
     parameter cycle = 2;
     parameter COUNTER_SIZE = 4;
-
-  
-    // //Instantiate from counter module
-    // counter c1(.ctrl(sig.ctrl), 
-    //             .INIT(sig.INIT), 
-    //             .loadValue(sig.loadValue), 
-    //             .clk(sig.clk), 
-    //             .rst_l(sig.rst_l), 
-    //             .LOSER(sig.LOSER), 
-    //             .WINNER(sig.WINNER), 
-    //             .WHO(sig.WHO), 
-    //             .GAMEOVER(sig.GAMEOVER));
-    
-
     /********************************************************************************
         INITIAL BLOCK
     ********************************************************************************/
@@ -37,6 +21,10 @@ program tb_counter(Counter_Interface.tb sig);
         for (int ctrl_c = 0; ctrl_c <= 3; ctrl_c = ctrl_c + 1) begin 
             for (int loadValue_c = 0; loadValue_c < 3; loadValue_c = loadValue_c + 1) begin   
                 // sig.rst_l <= 1;
+                assertion_1: assert (sig.cb.WINNER == 0)
+                    $display("WINNER = %d asserted correctly", sig.cb.WINNER);
+                else 
+                    $fatal("WINNER = %d not asserted correctly", sig.cb.WINNER);
                 sig.cb.ctrl <= ctrl_c;
                 if(loadValue_c == 2) sig.cb.loadValue <= {COUNTER_SIZE{1'b1}};
                 else sig.cb.loadValue <= loadValue_c;
@@ -51,10 +39,33 @@ program tb_counter(Counter_Interface.tb sig);
             end
         end
     end
-    
+    /****************************
+        Assign BLOCK
+    ****************************/
+    assign WHO = sig.cb.WHO;
+    assign LOSER = sig.cb.LOSER;
+    assign WINNER = sig.cb.WINNER;
+    assign GAMEOVER = sig.cb.GAMEOVER;  
+    /****************************
+        Properties
+    ****************************/
+    property signals_cleared;
+      @(sig.cb) disable iff(!($fell(sig.rst_l) )) (WHO ==0 || LOSER == 0 || GAMEOVER == 0 || WINNER ==0);
+    endproperty
 
+    property winner;
+      @(sig.cb)
+      if($fell(sig.rst_l)) ##[100:200] GAMEOVER ==1;
+    endproperty
+
+    /****************************
+        Asserions
+    ****************************/
+    assert_winner: assert property(winner)$display("[%0t] ----- Assertion GameOver passed", $time);
+    assert_signals_cleared: assert property (signals_cleared) $display("[%0t] ----- Assertion Reseting_signals passed", $time);
 endprogram
 
+      
 
 module top (output bit clk);
     initial clk = 1;
@@ -62,9 +73,9 @@ module top (output bit clk);
     Counter_Interface iface(clk);
     tb_counter t0(iface.tb);
     counter G0(iface.dut);
-    /********************************************************************************
+    /******************************
         DUMP VARIABLES
-    ********************************************************************************/
+    ******************************/
     initial begin
         $dumpfile("wave.vcd");
         $dumpvars;
