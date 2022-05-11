@@ -1,7 +1,7 @@
 /**********************************************************************************
 	  Module name: tb_counter                                                   
       Description: testbench
-      Date: May 2022                                                      
+      Date: April 2022                                                      
       Auther: Sarah Mohamed Ahmed  
 **********************************************************************************/
 program tb_counter(Counter_Interface.tb sig);
@@ -20,6 +20,7 @@ program tb_counter(Counter_Interface.tb sig);
         sig.cb.INIT <= 1;
         for (int ctrl_c = 0; ctrl_c <= 3; ctrl_c = ctrl_c + 1) begin 
             for (int loadValue_c = 0; loadValue_c < 3; loadValue_c = loadValue_c + 1) begin   
+                // sig.rst_l <= 1;
                 assertion_1: assert (sig.cb.WINNER == 0)
                     $display("WINNER = %d asserted correctly", sig.cb.WINNER);
                 else 
@@ -30,7 +31,7 @@ program tb_counter(Counter_Interface.tb sig);
                 sig.cb.INIT <= 0;
                 #2
                 sig.cb.rst_l <= 0;
-                #2
+              	#2
                 sig.cb.INIT <= 1;
                 #1
                 sig.cb.INIT <= 0;
@@ -49,20 +50,20 @@ program tb_counter(Counter_Interface.tb sig);
     /****************************
         Properties
     ****************************/
-    property signals_cleared;
+    property reset_signals;
       @(sig.cb) disable iff(!($fell(sig.rst_l) )) (WHO ==0 || LOSER == 0 || GAMEOVER == 0 || WINNER ==0);
     endproperty
 
     property winner;
       @(sig.cb)
-      if($fell(sig.rst_l)) ##[100:200] GAMEOVER ==1;
+      if($fell(sig.rst_l)) ##[150:250] GAMEOVER == 1;
     endproperty
 
     /****************************
         Asserions
     ****************************/
-    assert_winner: assert property(winner)$display("[%0t] ----- Assertion GameOver passed", $time);
-    assert_signals_cleared: assert property (signals_cleared) $display("[%0t] ----- Assertion Reseting_signals passed", $time);
+  	assert_winner: assert property(winner)$display("@ cycle [%0t] Assertion GameOver passed", $time / 2);
+    assert_reset_signals: assert property (reset_signals) $display("@ cycle [%0t] Assertion Reseting signals passed", $time / 2);
 endprogram
 
       
