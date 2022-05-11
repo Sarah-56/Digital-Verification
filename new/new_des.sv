@@ -9,7 +9,7 @@ interface Counter_Interface #(
     bit [COUNTER_SIZE - 1:0] loadValue;
 
     clocking cb @(posedge clk);
-      default input #0ns output #0ns;
+      default input #0ns output #1ns;
       output rst_l, ctrl, INIT, loadValue;
       input WHO, LOSER, WINNER, GAMEOVER;
     endclocking
@@ -27,14 +27,6 @@ interface Counter_Interface #(
     );
 endinterface
 
-/***********************************************************************************
-    Module name: counter                                                   
-    Description: multi-mode counter. It can count up, down, by ones and by twos. 
-                There is a two-bit control bus input indicating which one of 
-                the four modes is active.
-    Date: April 2022                                                      
-    Auther: Sarah Mohamed Ahmed  
-***********************************************************************************/
  module counter #( 
     parameter COUNTER_SIZE = 4          // number of bits in counter
     )(
